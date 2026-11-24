@@ -1,0 +1,8 @@
+/home/bpz/yolo系列网课/tensorrtx-yolov13/build/CMakeFiles/install/strip.dir
+/home/bpz/yolo系列网课/tensorrtx-yolov13/build/CMakeFiles/install/local.dir
+/home/bpz/yolo系列网课/tensorrtx-yolov13/build/CMakeFiles/install.dir
+/home/bpz/yolo系列网课/tensorrtx-yolov13/build/CMakeFiles/list_install_components.dir
+/home/bpz/yolo系列网课/tensorrtx-yolov13/build/CMakeFiles/rebuild_cache.dir
+/home/bpz/yolo系列网课/tensorrtx-yolov13/build/CMakeFiles/edit_cache.dir
+/home/bpz/yolo系列网课/tensorrtx-yolov13/build/CMakeFiles/yolov13_camera.dir
+/home/bpz/yolo系列网课/tensorrtx-yolov13/build/CMakeFiles/myplugins.dir

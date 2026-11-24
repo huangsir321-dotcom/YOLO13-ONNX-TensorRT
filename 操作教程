@@ -1,0 +1,168 @@
+一、yoloV13复现
+
+1、安装libelImg
+（1）conda create -n use_labelimg python=3.6
+（2）conda activate use_labelimg
+（3）pip install labelimg -i https://pypi.tuna.tsinghua.edu.cn/simple
+（4）执行命令打开：labelImg
+
+
+#######
+问题：labelImg
+qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, wayland-egl, wayland, wayland-xcomposite-egl, wayland-xcomposite-glx, webgl, xcb.
+
+已放弃 (核心已转储)
+解决方案：sudo apt install libxcb-*
+
+2、将数据标签划分为训练集、验证集、测试集
+请查看huafen.py
+
+3、虚拟环境安装
+1、离线安装pytorch,torchvision
+http://download.pytorch.org/whl/torch_stable.html
+下载指定版本的torch(torch-2.2.2+cu118-cp311-cp311-linux_x86_64.whl)和torchvision
+提前在github上将flash_attn-2.7.3+cu11torch2.2cxx11abiFALSE-cp311-cp311-linux_x86_64.whl下载下来。
+2、yolo原始代码参数修改
+3、模型训练
+4、连接外接相机
+
+二、onnxruntime部署
+wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+sudo sh cuda_11.8.0_520.61.05_linux.run
+onnxruntime推理，如果使用GPU需要安装cuddn。去官网下载即可。
+网址：https://developer.nvidia.com/cudnn
+sudo cp cuda/include/cudnn.h /usr/local/cuda-11.8/include
+sudo cp cuda/lib64/libcudnn* /usr/local/cuda-11.8/lib64
+sudo chmod a+r /usr/local/cuda-11.8/include/cudnn.h 
+sudo chmod a+r /usr/local/cuda-11.8/lib64/libcudnn*
+
+在进行yolovonnx c++部署时，onnxruntime-linux-x64-1.18.1.tgz下载后怎么使用
+
+
+ONNX Runtime v1.18.1
+
+https://github.com/microsoft/onnxruntime/releases
+
+wget https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-linux-x64-1.18.1.tgz
+tar -xzf onnxruntime-linux-x64-1.18.1.tgz
+1、opencv C++版本
+wget -O opencv.zip https://github.com/opencv/opencv/archive/3.4.3.zip
+安装依赖：
+2、sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev  libtiff5-dev libopenexr-dev libtbb-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libgtk-3-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev pkg-config
+3、cmake编译：
+cd opencv-3.4.3/
+mkdir build
+cd build
+cmake ..
+cmake -D CMAKE_BUILD_TYPE=Release -D OPENCV_GENERATE_PKGCONFIG=YES ..
+
+4、make编译：sudo make -j4
+
+5、make install安装：sudo make install
+6、修改/etc/ld.so.conf文件
+
+sudo gedit /etc/ld.so.conf
+include /usr/local/lib
+sudo ldconfig
+7、修改bash.bashrc文件
+sudo gedit /etc/bash.bashrc 
+文件末尾加上：
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+export PKG_CONFIG_PATH
+source /etc/bash.bashrc
+8、验证安装
+pkg-config opencv --modversion
+
+
+rm -rf build
+
+
+mkdir build
+ camke ..
+ make
+
+8、安装cuda和cuddn
+8.1安装cuda
+wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+sudo sh cuda_11.8.0_520.61.05_linux.run
+gedit ~/.bashrc
+export PATH=/usr/local/cuda-11.8/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-11.8/lib64:$LD_LIBRARY_PATH
+export LIBRARY_PATH=/usr/local/cuda-11.8/lib64:$LIBRARY_PATH
+source ~/.bashrc
+nvcc --version
+
+
+8.2安装cuddn
+网址：https://developer.nvidia.com/cudnn
+历史版本：https://developer.nvidia.cn/rdp/cudnn-archive
+tar -xvf cudnn-linux-x86_64-8.9.0.131_cuda11-archive.tar.xz
+
+sudo cp cuda/include/cudnn.h /usr/local/cuda-11.8/include
+sudo cp cuda/lib64/libcudnn* /usr/local/cuda-11.8/lib64
+
+sudo chmod a+r /usr/local/cuda-11.8/include/cudnn.h 
+sudo chmod a+r /usr/local/cuda-11.8/lib64/libcudnn*
+
+cd ~/cuddn所在目录下
+sudo cp -r cudnn-linux-x86_64-8.9.0.131_cuda11-archive/include/* /usr/local/cuda-11.8/include/
+sudo cp -r cudnn-linux-x86_64-8.9.0.131_cuda11-archive/lib/* /usr/local/cuda-11.8/lib64/
+
+
+cat /usr/local/cuda/include/cudnn_version.h | grep CUDNN_MAJOR -A 2
+cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2
+make -j16  #编译
+9、安装tensorRT C++安装  tensorRT python安装
+9.1 tensorRT C++安装
+https://developer.nvidia.com/tensorrt/download
+tar -xzvf TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz
+gedit ~/.bashrc
+# 添加以下内容
+export LD_LIBRARY_PATH=/home/bpz/TensorRT-8.6.1.6/lib:$LD_LIBRARY_PATH
+export LIBRARY_PATH=/home/bpz/TensorRT-8.6.1.6/lib:$LIBRARY_PATH
+
+source ~/.bashrc
+验证TensorRT是否安装成功
+cd path/TensorRT-8.6.1.6/samples/
+or cd path/TensorRT-8.6.1.6/samples/sampleOnnxMNIST/
+make -j8
+cd path/TensorRT-8.6.1.6/bin/
+./sample_onnx_mnist
+
+9.2tensorRT python安装
+cd TensorRT-8.6.1.6/python/
+pip install tensorrt-8.6.1.6-cp311-none-linux_x86_64.whl
+
+import tensorrt as trt
+
+
+9.3 yolo python tensorrt推理部署 
+运行yolo13_det_trt_cam2.py可能会报错如下：
+好像只会在ubuntu20.04中出现，大家多试一试。
+ite-packages/pycuda/autoinit.py", line 9, in <module>
+    cuda.init()
+pycuda._driver.LogicError: cuInit failed: initialization erro
+我是运行了这个命令：sudo apt-get install nvidia-modprobe  之后一定要重启
+
+
+trtexec --onnx=best.onnx --saveEngine=yolov13.engine --fp16
+如果报错，在.bashrc文件中加入下面的内容
+export PATH=/home/bpz/TensorRT-8.6.1.6/bin:$PATH
+source ~/.bashrc
+9.4 YOLOv13 python tensorrt部署推理
+cd tensorrt-yolov13
+python yolo13_det_trt_cam2.py
+
+9.5 YOLOv13 C++ tensorrt部署推理
+cd tensorrt-yolov13
+mkdir build
+cd build
+cmake ..
+make
+
+./yolov13_camera
+

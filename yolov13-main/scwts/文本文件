@@ -1,0 +1,6 @@
+python gen_wts.py \
+  --weights best.pt \
+  --cfg yolov13.yaml \
+  --output yolov13test.wts
+  
+  在/home/bpz/yolo系列网课/yolov13-main/scwts/目录下，有best.pt、gen_wts.py和yolov13.yaml文件

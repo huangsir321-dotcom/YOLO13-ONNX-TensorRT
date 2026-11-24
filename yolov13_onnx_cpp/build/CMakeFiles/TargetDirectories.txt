@@ -1,0 +1,4 @@
+/home/bpz/yolo系列网课/yolov13_onnx_cpp/build/CMakeFiles/rebuild_cache.dir
+/home/bpz/yolo系列网课/yolov13_onnx_cpp/build/CMakeFiles/edit_cache.dir
+/home/bpz/yolo系列网课/yolov13_onnx_cpp/build/CMakeFiles/yolov13_cam.dir
+/home/bpz/yolo系列网课/yolov13_onnx_cpp/build/CMakeFiles/yolov13_image.dir
